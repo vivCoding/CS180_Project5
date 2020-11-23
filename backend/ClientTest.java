@@ -10,7 +10,6 @@ import java.util.Scanner;
     *
     * @author Team 15-3, CS 180 - Merge
     * @version November 23, 2020
-    *
 */
 
 public class ClientTest {

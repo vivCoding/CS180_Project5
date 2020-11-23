@@ -4,12 +4,11 @@ import java.net.*;
 /**
     * Server
     *
-    * Handles the server creation
-    *
+    * Handles the server creation, requests, and authentication
+    * The controller of the whole backend system
     *
     * @author Team 15-3, CS 180 - Merge
     * @version November 23, 2020
-    *
 */
 
 public class Server {
