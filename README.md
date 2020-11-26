@@ -1,1 +1,2 @@
-# CS180_Project5
+# CS180 Project5
+## Team 15-3
