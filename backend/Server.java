@@ -14,38 +14,36 @@ import java.net.*;
 */
 
 public class Server {
+    
     public static void main(String[] args) throws IOException {
+        /// server creation
         ServerSocket serverSocket = new ServerSocket(4242);
         System.out.println("Waiting for clients to connect...");
+        // client connection
         Socket socket = serverSocket.accept();
         System.out.println("Client connected!");
 
+        // instantiating our readers and writers
+        // We send our status codes via the writer, and any object data via the objectWriter
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter writer = new PrintWriter(socket.getOutputStream());
-        ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
-
-        Account bob = new Account("bob123", "password", "bob@email", "123", "a cool guy", "pizza, soccer, and sleeping");
+        ObjectOutputStream objectWriter = new ObjectOutputStream(socket.getOutputStream());
 
         String message = "";
         do {
+            // read any request codes from the client
             message = reader.readLine();
             System.out.println("Received from client: " + message);
-            
-            if (message.equals("getUser")) {
-                writer.write("good");
-                writer.println();
-                writer.flush();
-                objectOutput.writeObject(bob);
-                // objectOutput.flush();
-            } else {
-                writer.write("bad");
-                writer.println();
-                writer.flush();
-            }
-        } while (!message.equals("close server"));
+        } while (!message.equals("close server")); // this is probably temporarily
 
         serverSocket.close();
         reader.close();
         writer.close();
+    }
+
+    public static void sendToClient (PrintWriter writer, String message) {
+        writer.write(message);
+        writer.println();
+        writer.flush();
     }
 }

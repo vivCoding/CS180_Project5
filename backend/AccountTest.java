@@ -9,7 +9,7 @@ package backend;
     * @version November 23, 2020
 */
 
-public class Testing {
+public class AccountTest {
     
     public static void main(String[] args) {
         System.out.println("Working");

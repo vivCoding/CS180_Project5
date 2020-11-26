@@ -32,14 +32,6 @@ public class ClientTest {
             writer.write(message);
             writer.println();
             writer.flush();
-
-            response = reader.readLine();
-            if (response.equals("good")) {
-                Account user = (Account) objectInput.readObject();
-                System.out.println(user.getUsername());
-            } else {
-                System.out.println(response);
-            }
         } while (!message.equals("close server"));
 
         socket.close();
