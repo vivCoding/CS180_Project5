@@ -18,11 +18,20 @@ import backend.Account;
  */
 
 public class Client { //TODO add connection to the server code, create friend and profile menus
+	//user account variables
 	private static String accountName;
 	private static String pass;
 	private static Account user;
+	//static request arrays for requests with no parameters
 	public static final String[] createSession = {"createSession"};
 	public static final String[] closeSession = {"closeSession"};
+	
+	//io declaration
+	public static Socket socket;
+	public static BufferedReader reader;
+	public static PrintWriter writer;
+	public static ObjectInputStream objectInput;
+	public static ObjectOutputStream objectOut;
 
 	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
 		
@@ -30,14 +39,14 @@ public class Client { //TODO add connection to the server code, create friend an
 		String hostname = JOptionPane.showInputDialog(null, "Server Hostname", JOptionPane.QUESTION_MESSAGE);
 		int port = Integer.parseInt(JOptionPane.showInputDialog(null, "Server Port", JOptionPane.QUESTION_MESSAGE));
 		//connects to the server and shows confirmation
-		Socket socket = new Socket(hostname, port);
+		socket = new Socket(hostname, port);
 		JOptionPane.showInternalMessageDialog(null, "Successfully connected to server", "Connection Established", JOptionPane.INFORMATION_MESSAGE);
 		
 		//establishes IO method with server
-		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter writer = new PrintWriter(socket.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
-        ObjectOutputStream objectOut = new ObjectOutputStream(socket.getOutputStream());
+		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new PrintWriter(socket.getOutputStream());
+        objectInput = new ObjectInputStream(socket.getInputStream());
+        objectOut = new ObjectOutputStream(socket.getOutputStream());
         
         //creates server session
         objectOut.writeObject(createSession);
@@ -108,11 +117,12 @@ public class Client { //TODO add connection to the server code, create friend an
 		
 		//base menu for client, when running the client is still running
 		//once the Close option is chosen, the client closes all resources and terminates
-		String[] menus = {"Friends", "Profile", "Close Client"};
+		String[] menus = {"Friends", "Profile", "Close Client", "Delete Account"};
 		
-		String menuChoice = (String) JOptionPane.showInputDialog(null, "Home", "", JOptionPane.QUESTION_MESSAGE, null, menus,
-				menus[0]);
+		
 		do {
+			String menuChoice = (String) JOptionPane.showInputDialog(null, "Home", "", JOptionPane.QUESTION_MESSAGE, null, menus,
+				menus[0]);
 			switch(menuChoice) {
 			case "Friends":
 				friendMenu();
@@ -120,15 +130,18 @@ public class Client { //TODO add connection to the server code, create friend an
 			case "Profile": 
 				profileMenu();
 				break;
+			case "Delete Account":
+				int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to deleet your account?", "Confirmation Required", JOptionPane.YES_NO_OPTION);
+				if (confirmation == JOptionPane.YES_OPTION) {
+					String[] deleteAccount = {"deleteAccount", accountName, pass};
+					objectOut.writeObject(deleteAccount);
+					closeClient();
+					return;
+				}
 			case "Close Client":
 				//close all client resources here
 				
-				objectOut.writeObject(closeSession);
-				writer.close();
-				reader.close();
-				objectInput.close();
-				objectOut.close();
-				socket.close();
+				closeClient();
 				return;
 			} 
 		
@@ -148,9 +161,15 @@ public class Client { //TODO add connection to the server code, create friend an
 		JFrame profileFrame = new JFrame();
 	}
 	
-	public static void deleteAccount() {
-		
+	public static void closeClient() throws IOException {
+		objectOut.writeObject(closeSession);
+		writer.close();
+		reader.close();
+		objectInput.close();
+		objectOut.close();
+		socket.close();
 	}
+	
 	
 
 }
