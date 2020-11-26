@@ -17,7 +17,7 @@ import backend.Account;
  *  @version November 26, 2020
  */
 
-public class Client { //TODO add connection to the server code, create friend and profile menus
+public class Client { //TODO create friend and profile menus, establish all server requests
 	//user account variables
 	private static String accountName;
 	private static String pass;
