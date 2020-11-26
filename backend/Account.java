@@ -21,7 +21,8 @@ public class Account implements Serializable {
     private String password;
 
     // profile info
-    private ContactInfo contactInfo;
+    private String email;
+    private String phoneNumber;
     private String bio;
     private String interests;
 
@@ -35,7 +36,8 @@ public class Account implements Serializable {
     public Account(String username, String password, String email, String phoneNumber, String bio, String interests) {
         this.username = username;
         this.password = password;
-        this.contactInfo = new ContactInfo(email, phoneNumber);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
         this.bio = bio;
         this.interests = interests;
         this.friends = new ArrayList<Account>();
@@ -50,9 +52,12 @@ public class Account implements Serializable {
     public void setPassword(String password) { this.password = password; }
 
     // getters and setters for profile info
-    public ContactInfo getContactInfo() { return contactInfo; }
+    public String getEmail() { return email; }
+    public String getPhoneNumber() { return phoneNumber; }
     public String getBio() { return bio; }
     public String getInterests() { return interests; }
+    public void setEmail(String email) { this.email = email; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public void setBio(String bio) { this.bio = bio; }
     public void setInterests(String interests) { this.interests = interests; }
 
