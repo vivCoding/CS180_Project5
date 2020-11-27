@@ -1,6 +1,6 @@
 package backend;
 
-public class Session {
+public class Session extends Thread{
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
