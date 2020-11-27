@@ -131,7 +131,7 @@ public class Client { //TODO create friend and profile menus, establish all serv
 				profileMenu();
 				break;
 			case "Delete Account":
-				int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to deleet your account?", "Confirmation Required", JOptionPane.YES_NO_OPTION);
+				int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Confirmation Required", JOptionPane.YES_NO_OPTION);
 				if (confirmation == JOptionPane.YES_OPTION) {
 					String[] deleteAccount = {"deleteAccount", accountName, pass};
 					objectOut.writeObject(deleteAccount);
@@ -153,21 +153,21 @@ public class Client { //TODO create friend and profile menus, establish all serv
 	//method to open a window with the friend menu
 	public static void friendMenu() {
 		JFrame friendFrame = new JFrame();
-		//hasRequested goes here
-		//isFriendsWith goes here?
-		//sendFriendRequest goes here
-		//cancelFriendRequest goes here
-		//acceptFriendRequest goes here
-		//declineFriendRequest goes here
-		//removeFriend goes here
-		//getuser goes here
+		//hasRequested method implemented
+		//isFriendsWith method implemented
+		//sendFriendRequest method implemented
+		//cancelFriendRequest method implemented
+		//acceptFriendRequest method implemented
+		//declineFriendRequest method implemented
+		//removeFriend method implemented
+		//getuser method implemented
 	}
 	
 	
 	//method to open a window with the profile menu
 	public static void profileMenu() {
 		JFrame profileFrame = new JFrame();
-		//updateAccount goes here
+		//updateAccount method implemented
 	}
 	
 	public static void closeClient() throws IOException {
@@ -179,6 +179,209 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		socket.close();
 	}
 	
+	public static void updateAccount(String email, String phoneNo, String bio, String interests) throws IOException, ClassNotFoundException {
+		String[] updateString = {"updateAccount", accountName, email, phoneNo, bio, interests};
+		objectOut.writeObject(updateString);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username could not be found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "incorrectPassword":
+			JOptionPane.showInternalMessageDialog(null, "Password was not correct!", "Password Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "usernameExists":
+			JOptionPane.showInternalMessageDialog(null, "Username already exists!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "invalidUsername":
+			JOptionPane.showInternalMessageDialog(null, "Username is invalid!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Account information cannot be empty!", "Account Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		}
+	}
+	
+	public static void updateAccount(String email, String phoneNo, String bio, String interests, String pass, String newUsername, String newPassword) throws IOException, ClassNotFoundException {
+		String[] updateString = {"updateAccount", accountName, email, phoneNo, bio, interests, newUsername, newPassword};
+		objectOut.writeObject(updateString);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username could not be found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "incorrectPassword":
+			JOptionPane.showInternalMessageDialog(null, "Password was not correct!", "Password Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "usernameExists":
+			JOptionPane.showInternalMessageDialog(null, "Username already exists!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "invalidUsername":
+			JOptionPane.showInternalMessageDialog(null, "Username is invalid!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Account information cannot be empty!", "Account Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		}
+	}
+	
+	public static boolean isFriendsWith(String username, String username2) throws IOException {
+		String[] isFriends = {"isFriendsWith", username, username2};
+		objectOut.writeObject(isFriends);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			boolean isFriend = objectInput.readBoolean();
+			return isFriend;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username2 + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Fields are empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		}
+		return false;
+	}
+	
+	public static void sendFriendRequest(String username) throws IOException, ClassNotFoundException {
+		String[] friendRequest = {"sendFriendRequest", accountName, username};
+		objectOut.writeObject(friendRequest);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + accountName + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Friend request cannot be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	
+	public static void cancelFriendRequest(String username) throws IOException, ClassNotFoundException {
+		String[] friendRequest = {"cancelFriendRequest", accountName, username};
+		objectOut.writeObject(friendRequest);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + accountName + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Friend request to cancel cannot be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static void acceptFriendRequest(String username) throws IOException, ClassNotFoundException {
+		String[] friendRequest = {"acceptFriendRequest", accountName, username};
+		objectOut.writeObject(friendRequest);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + accountName + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Friend to accept must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static void declineFriendRequest(String username) throws IOException, ClassNotFoundException {
+		String[] friendRequest = {"declineFriendRequest", accountName, username};
+		objectOut.writeObject(friendRequest);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + accountName + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Friend to deny must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static void removeFriend(String username) throws IOException, ClassNotFoundException {
+		String[] friendRequest = {"removeFriend", accountName, username};
+		objectOut.writeObject(friendRequest);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			user = (Account) objectInput.readObject();
+			break;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + accountName + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Friend to remove must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static Account getUser(String username) throws IOException, ClassNotFoundException {
+		String[] request = {"getUser", username};
+		objectOut.writeObject(request);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			return (Account) objectInput.readObject();
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		return null;
+	}
+	
+	public static boolean hasRequested(String username, String username2) throws IOException {
+		String[] request = {"hasRequested", username, username2};
+		objectOut.writeObject(request);
+		String code = reader.readLine();
+		switch (code) {
+		case "success":
+			boolean hasRequest = objectInput.readBoolean();
+			return hasRequest;
+		case "usernameNotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "username2NotFound":
+			JOptionPane.showInternalMessageDialog(null, "Username " + username2 + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		case "emptyFields":
+			JOptionPane.showInternalMessageDialog(null, "Usernames must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
+			break;
+		}
+		return false;
+	}
 	
 
 }
