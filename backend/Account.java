@@ -71,6 +71,8 @@ public class Account implements Serializable {
         return userInList(user.username, friends) != -1;
     }
 
+    // check if we have the other user in our friend requests
+    // also check if the other user has requested this user
     public boolean hasRequested(Account user) {
         int i = userInList(user.username, this.requestedFriends);
         int j = userInList(this.username, user.friendRequests);
@@ -91,9 +93,7 @@ public class Account implements Serializable {
     // remove a friend request that this user has made
     // Returns 1 if successful, -1 if not
     public int cancelFriendRequest(Account user) {
-        int i = userInList(user.username, this.requestedFriends);
-        int j = userInList(this.username, user.friendRequests);
-        if (i != -1 && j != -1) {
+        if (this.hasRequested(user)) {
             this.requestedFriends.remove(i);
             user.friendRequests.remove(j);
             return 1;
@@ -104,11 +104,7 @@ public class Account implements Serializable {
     // accept or decline a friend request in friendRequests
     // if function successful, return 1. Else, return -1
     public int acceptDeclineFriendRequest(Account user, boolean accepting) {
-        // check if we have the other user in our friend requests
-        int i = userInList(user.username, this.friendRequests);
-        // check if the other user has requested this user
-        int j = userInList(this.username, user.requestedFriends);
-        if (i != -1 && j != -1) {
+        if (this.hasRequested(user)) {
             // if this user is accepting friend request, add the users and remove from request lists
             // else, if this user is declining, only remove from friend requests lists
             if (accepting) {
@@ -125,9 +121,7 @@ public class Account implements Serializable {
     // "unfriend" and remove a friend from user's friends list
     // Returns 1 if successful, -1 if not
     public int removeFriend(Account user) {
-        int i = userInList(user.username, this.friends);
-        int j = userInList(this.username, user.friends);
-        if (i != -1 && j != -1) {
+        if (isFriendsWith(user)) {
             this.friends.remove(i);
             user.friends.remove(j);
             return 1;

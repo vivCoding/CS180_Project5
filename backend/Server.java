@@ -44,6 +44,7 @@ public class Server {
             String[] requestBody = (String[]) reader.readObject();
             requestType = requestBody[0];
             // handle the request type, read parameters, call the appropriate functions
+            // first check if any fields are empty. If they are, no need to continue
             boolean fieldsEmpty = false;
             for (String field : requestBody) {
                 if (field.length() == 0) {
@@ -53,6 +54,7 @@ public class Server {
                 }
             }
             if (!fieldsEmpty) {
+                // if we have fields, parse the request depending on what it is
                 switch (requestType) {
                     case ("createAccount"):
                         int createStatus = manager.createAccount(requestBody[1], requestBody[2], requestBody[3], requestBody[4], requestBody[5], requestBody[6]);
@@ -66,7 +68,8 @@ public class Server {
                         }
                         break;
                     case ("updateAccount"):
-                        if (requestBody.length == 6) {
+                        // update account has 2 types of requestBodies it can take. They are 2 different size arrays
+                        if (requestBody.length == 6) { // we are only changing profile info
                             int updateStatus = manager.updateAccount(requestBody[1], requestBody[2], requestBody[3], requestBody[4], requestBody[5]);
                             if (updateStatus == 1) {
                                 sendStatus("success");
@@ -74,7 +77,7 @@ public class Server {
                             } else if (updateStatus == -1) {
                                 sendStatus("usernameNotFound");
                             }
-                        } else if (requestBody.length == 9) {
+                        } else if (requestBody.length == 9) { // we are changing account info (username, password)
                             int updateStatus = manager.updateAccount(requestBody[1], requestBody[2], requestBody[3], requestBody[4], requestBody[5], requestBody[6], requestBody[7], requestBody[8]);
                             if (updateStatus == 1) {
                                 sendStatus("success");
@@ -95,22 +98,101 @@ public class Server {
                         sendStatus(deleteStatus == 1 ? "success" : (deleteStatus == -1 ? "incorrectPassword" : "usernameNotFound"));
                         break;
                     case ("loginUser"):
+                        String username = requestBody[1];
+                        String password = requestBody[2];
+                        Account loginUser = manager.getUser(username);
+                        if (loginUser == null) {
+                            sendStatus("usernameNotFound");
+                        } else if (password.equals(loginUser.getPassword())) {
+                            sendStatus("success");
+                            sendData(loginUser);
+                        } else {
+                            sendStatus("incorrectPassword");
+                        }
                         break;
                     case ("getUser"):
+                        Account getUser = manager.getUser(requestBody[1]);
+                        if (getUser == null) {
+                            sendStatus("usernameNotFound");
+                            sendData(getUser);
+                        } else {
+                            sendStatus("success");
+                        }
                         break;
                     case ("isFriendsWith"):
+                        Account user1 = manager.getUser(requestBody[1]);
+                        Account user2 = manager.getUser(requestBody[2]);
+                        if (user1 != null && user2 != null) {
+                            sendStatus("success");
+                            sendData(user1.isFriendsWith(user2));
+                        } else {
+                            sendStatus(user1 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     case ("hasRequested"):
+                        Account user3 = manager.getUser(requestBody[1]);
+                        Account user4 = manager.getUser(requestBody[2]);
+                        if (user3 != null && user4 != null) {
+                            sendStatus("success");
+                            sendData(user3.hasRequested(user4));
+                        } else {
+                            sendStatus(user3 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     case ("sendFriendRequest"):
+                        Account user5 = manager.getUser(requestBody[1]);
+                        Account user6 = manager.getUser(requestBody[2]);
+                        if (user5 != null && user6 != null) {
+                            user5.sendFriendRequest(user6);
+                            sendStatus("success");
+                            sendData(user5);
+                        } else {
+                            sendStatus(user5 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     case ("cancelFriendRequest"):
+                        Account user7 = manager.getUser(requestBody[1]);
+                        Account user8 = manager.getUser(requestBody[2]);
+                        if (user7 != null && user8 != null) {
+                            user7.cancelFriendRequest(user8);
+                            sendStatus("success");
+                            sendData(user7);
+                        } else {
+                            sendStatus(user7 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     case ("acceptFriendRequest"):
+                        Account user9 = manager.getUser(requestBody[1]);
+                        Account user10 = manager.getUser(requestBody[2]);
+                        if (user9 != null && user10 != null) {
+                            user9.acceptDeclineFriendRequest(user10, true);
+                            sendStatus("success");
+                            sendData(user9);
+                        } else {
+                            sendStatus(user9 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     case ("declineFriendRequest"):
+                        Account user11 = manager.getUser(requestBody[1]);
+                        Account user12 = manager.getUser(requestBody[2]);
+                        if (user11 != null && user12 != null) {
+                            user11.acceptDeclineFriendRequest(user12, false);
+                            sendStatus("success");
+                            sendData(user11);
+                        } else {
+                            sendStatus(user11 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     case ("removeFriend"):
+                        Account user13 = manager.getUser(requestBody[1]);
+                        Account user14 = manager.getUser(requestBody[2]);
+                        if (user13 != null && user14 != null) {
+                            user13.removeFriend(user14);
+                            sendStatus("success");
+                            sendData(user13);
+                        } else {
+                            sendStatus(user13 == null ? "usernameNotFound" : "username2NotFound");
+                        }
                         break;
                     default:
                         break;

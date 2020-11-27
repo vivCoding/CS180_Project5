@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class Manager {
 
     // the main list/database. Stores every single user
-    private ArrayList<Account> allUsers;
+    private static ArrayList<Account> allUsers;
 
     public Manager() {
         allUsers = new ArrayList<Account>();
@@ -25,7 +25,7 @@ public class Manager {
     // getter method for all users
     public ArrayList<Account> getAllUsers() { return allUsers; }
 
-    // getter method for a specifc user
+    // getter method for a specific user
     public Account getUser(String username) {
         int i = findUser(username);
         if (i != -1) {
