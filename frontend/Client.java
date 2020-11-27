@@ -80,7 +80,11 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		
 		} while(!hasAccount);
 		
-		//at this point client is connected to server and logged in
+		//at this point client has connected to server and logged in
+		
+		//disconnect to better allow multiple clients, will reconnect for IO with server
+		disconnectServer();
+		
 		
 		//base menu for client, when running the client is still running
 		//once the Close option is chosen, the client closes all resources and terminates
@@ -134,6 +138,7 @@ public class Client { //TODO create friend and profile menus, establish all serv
 	}
 	
 	public static boolean loginUser() throws IOException, ClassNotFoundException {
+		connectServer();
 		boolean hasAccount = false;
 		String[] accountInfo = {"loginUser", accountName, pass};
 		objectOut.writeObject(accountInfo);
@@ -149,10 +154,12 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		case "incorrectPassword":
 			JOptionPane.showInternalMessageDialog(null, "Incorrect Password", "Password Error!", JOptionPane.ERROR_MESSAGE);
 		}
+		disconnectServer();
 		return hasAccount;
 	}
 	
 	public static boolean createUser() throws ClassNotFoundException, IOException {
+		connectServer();
 		boolean hasAccount = false;
 		//section for contact info
 		String email = JOptionPane.showInputDialog(null, "Please enter your email", JOptionPane.QUESTION_MESSAGE);
@@ -178,30 +185,12 @@ public class Client { //TODO create friend and profile menus, establish all serv
 			JOptionPane.showInternalMessageDialog(null, "You must fill every field to create an account", "User Error!", JOptionPane.ERROR_MESSAGE);
 			break;
 		}
+		disconnectServer();
 		return hasAccount;
 	}
 	
-	public static void closeClient() throws IOException {
-		objectOut.writeObject(closeSession);
-		writer.close();
-		reader.close();
-		objectInput.close();
-		objectOut.close();
-		socket.close();
-	}
-	
-	public static boolean deleteAccount() throws IOException {
-		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Confirmation Required", JOptionPane.YES_NO_OPTION);
-		if (confirmation == JOptionPane.YES_OPTION) {
-			String[] deleteAccount = {"deleteAccount", accountName, pass};
-			objectOut.writeObject(deleteAccount);
-			closeClient();
-			return true;
-		}
-		return false;
-	}
-	
 	public static void updateAccount(String email, String phoneNo, String bio, String interests) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] updateString = {"updateAccount", accountName, email, phoneNo, bio, interests};
 		objectOut.writeObject(updateString);
 		String code = reader.readLine();
@@ -225,9 +214,11 @@ public class Client { //TODO create friend and profile menus, establish all serv
 			JOptionPane.showInternalMessageDialog(null, "Account information cannot be empty!", "Account Error!", JOptionPane.ERROR_MESSAGE);
 			break;
 		}
+		disconnectServer();
 	}
 	
 	public static void updateAccount(String email, String phoneNo, String bio, String interests, String pass, String newUsername, String newPassword) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] updateString = {"updateAccount", accountName, email, phoneNo, bio, interests, newUsername, newPassword};
 		objectOut.writeObject(updateString);
 		String code = reader.readLine();
@@ -251,15 +242,18 @@ public class Client { //TODO create friend and profile menus, establish all serv
 			JOptionPane.showInternalMessageDialog(null, "Account information cannot be empty!", "Account Error!", JOptionPane.ERROR_MESSAGE);
 			break;
 		}
+		disconnectServer();
 	}
 	
 	public static boolean isFriendsWith(String username, String username2) throws IOException {
+		connectServer();
 		String[] isFriends = {"isFriendsWith", username, username2};
 		objectOut.writeObject(isFriends);
 		String code = reader.readLine();
 		switch (code) {
 		case "success":
 			boolean isFriend = objectInput.readBoolean();
+			disconnectServer();
 			return isFriend;
 		case "usernameNotFound":
 			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
@@ -271,10 +265,12 @@ public class Client { //TODO create friend and profile menus, establish all serv
 			JOptionPane.showInternalMessageDialog(null, "Fields are empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 			break;
 		}
+		disconnectServer();
 		return false;
 	}
 	
 	public static void sendFriendRequest(String username) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] friendRequest = {"sendFriendRequest", accountName, username};
 		objectOut.writeObject(friendRequest);
 		String code = reader.readLine();
@@ -291,10 +287,12 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		case "emptyFields":
 			JOptionPane.showInternalMessageDialog(null, "Friend request cannot be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 		}
+		disconnectServer();
 	}
 	
 	
 	public static void cancelFriendRequest(String username) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] friendRequest = {"cancelFriendRequest", accountName, username};
 		objectOut.writeObject(friendRequest);
 		String code = reader.readLine();
@@ -311,9 +309,11 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		case "emptyFields":
 			JOptionPane.showInternalMessageDialog(null, "Friend request to cancel cannot be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 		}
+		disconnectServer();
 	}
 	
 	public static void acceptFriendRequest(String username) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] friendRequest = {"acceptFriendRequest", accountName, username};
 		objectOut.writeObject(friendRequest);
 		String code = reader.readLine();
@@ -330,9 +330,11 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		case "emptyFields":
 			JOptionPane.showInternalMessageDialog(null, "Friend to accept must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 		}
+		disconnectServer();
 	}
 	
 	public static void declineFriendRequest(String username) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] friendRequest = {"declineFriendRequest", accountName, username};
 		objectOut.writeObject(friendRequest);
 		String code = reader.readLine();
@@ -349,9 +351,11 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		case "emptyFields":
 			JOptionPane.showInternalMessageDialog(null, "Friend to deny must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 		}
+		disconnectServer();
 	}
 	
 	public static void removeFriend(String username) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] friendRequest = {"removeFriend", accountName, username};
 		objectOut.writeObject(friendRequest);
 		String code = reader.readLine();
@@ -368,29 +372,36 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		case "emptyFields":
 			JOptionPane.showInternalMessageDialog(null, "Friend to remove must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 		}
+		disconnectServer();
 	}
 	
 	public static Account getUser(String username) throws IOException, ClassNotFoundException {
+		connectServer();
 		String[] request = {"getUser", username};
 		objectOut.writeObject(request);
 		String code = reader.readLine();
 		switch (code) {
 		case "success":
+			disconnectServer();
 			return (Account) objectInput.readObject();
 		case "usernameNotFound":
 			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
+			disconnectServer();
 			return null;
 		}
+		disconnectServer();
 		return null;
 	}
 	
 	public static boolean hasRequested(String username, String username2) throws IOException {
+		connectServer();
 		String[] request = {"hasRequested", username, username2};
 		objectOut.writeObject(request);
 		String code = reader.readLine();
 		switch (code) {
 		case "success":
 			boolean hasRequest = objectInput.readBoolean();
+			disconnectServer();
 			return hasRequest;
 		case "usernameNotFound":
 			JOptionPane.showInternalMessageDialog(null, "Username " + username + " is not found!", "User Error!", JOptionPane.ERROR_MESSAGE);
@@ -402,6 +413,7 @@ public class Client { //TODO create friend and profile menus, establish all serv
 			JOptionPane.showInternalMessageDialog(null, "Usernames must not be empty!", "Input Error!", JOptionPane.ERROR_MESSAGE);
 			break;
 		}
+		disconnectServer();
 		return false;
 	}
 	
@@ -422,6 +434,28 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		writer.close();
 		objectInput.close();
 		objectOut.close();
+	}
+
+
+	public static void closeClient() throws IOException {
+		connectServer();
+		objectOut.writeObject(closeSession);
+		disconnectServer();
+	}
+
+
+	public static boolean deleteAccount() throws IOException {
+		connectServer();
+		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?", "Confirmation Required", JOptionPane.YES_NO_OPTION);
+		if (confirmation == JOptionPane.YES_OPTION) {
+			String[] deleteAccount = {"deleteAccount", accountName, pass};
+			objectOut.writeObject(deleteAccount);
+			disconnectServer();
+			closeClient();
+			return true;
+		}
+		disconnectServer();
+		return false;
 	}
 	
 
