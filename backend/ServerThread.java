@@ -35,13 +35,18 @@ public class ServerThread extends Thread {
         // We send our status codes via the writer
         // and any object data via the objectWriter
         try {
+            System.out.println("Running thread");
             reader = new ObjectInputStream(socket.getInputStream());
             writer = new PrintWriter(socket.getOutputStream());
+            writer.flush();
             objectWriter = new ObjectOutputStream(socket.getOutputStream());
+            objectWriter.flush();
             String requestType = "";
+            System.out.println("Starting loop");
             do {
                 // read request and the request type
                 // The first element in the array will always be the request type
+                System.out.println("Awaiting request...");
                 String[] requestBody = (String[]) reader.readObject();
                 requestType = requestBody[0];
                 // handle the request type, read parameters, call the appropriate functions
@@ -204,7 +209,8 @@ public class ServerThread extends Thread {
                         break;
                     }
                 }
-            } while (!requestType.equals("closeSession")); // this is probably temporarily
+            } while (!requestType.equals("closeSession"));
+            System.out.println("Thread stopped");
             socket.close();
             reader.close();
             writer.close();

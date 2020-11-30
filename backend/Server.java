@@ -23,7 +23,7 @@ public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         // server creation
         ServerSocket serverSocket = new ServerSocket(4242);
-        System.out.println("Waiting for clients to connect...");
+        System.out.println("Server running on port 4242");
 
         // Starting up our database/manageer/model
         Manager manager = new Manager();
@@ -32,7 +32,7 @@ public class Server {
             // client connection
             Socket socket = serverSocket.accept();
             System.out.println("Client connected!");
-            new ServerThread(socket, manager);
+            new ServerThread(socket, manager).run();
         }
     }
 }
