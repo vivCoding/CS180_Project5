@@ -229,7 +229,7 @@ public class Client { //TODO create friend and profile menus, establish all serv
 		//establishes IO method with server
 		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		writer = new PrintWriter(socket.getOutputStream());
-		objectInput = new ObjectInputStream(socket.getInputStream());
+		objectInput = new ObjectInputStream(socket.getInputStream()); //currently freezing for unknown reason here
 		objectOut = new ObjectOutputStream(socket.getOutputStream());
 
 		//creates server session
