@@ -10,7 +10,7 @@ public class UsernameButton extends JButton {
 
     public UsernameButton(String username, String friendType, Account account) {
         super(username);
-        this.friendType = friendType; // {"friendRequest, requestedFriend, friend"}
+        this.friendType = friendType; // {friendRequest, requestedFriend, friend, searched}
         this.account = account;
     }
 
