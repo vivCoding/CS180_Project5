@@ -14,29 +14,34 @@ import java.util.Scanner;
 */
 
 public class ClientTest {
-    
+
+    static Socket socket;
+
+    static ObjectInputStream objectIn;
+    static ObjectOutputStream objectOut;
+
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
-        Socket socket = new Socket("localhost", 4242);
-        System.out.println("Connected to server!");
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter writer = new PrintWriter(socket.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
-
         Scanner scan = new Scanner(System.in);
+
         String message;
-        String response;
         do {
             System.out.print("Send message to server: ");
             message = scan.nextLine();
-            writer.write(message);
-            writer.println();
-            writer.flush();
-        } while (!message.equals("close server"));
+            System.out.println(message.split(" "));
+        } while (!message.equals("closeClient"));
 
-        socket.close();
-        writer.close();
-        reader.close();
         scan.close();
+    }
+
+    static void connectServer() throws IOException, UnknownHostException {
+        socket = new Socket("localhost", 4242);
+        objectOut = new ObjectOutputStream(socket.getOutputStream());
+        objectIn = new ObjectInputStream(socket.getInputStream());
+    }
+
+    static void disconnectServer() throws IOException {
+        socket.close();
+        objectOut.close();
+        objectIn.close();
     }
 }

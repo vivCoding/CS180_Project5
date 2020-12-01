@@ -22,7 +22,6 @@ public class ServerThread extends Thread {
     private Manager manager;
 
     private ObjectInputStream reader;
-    private PrintWriter writer;
     private ObjectOutputStream objectWriter;
 
     // When we instantiating t1he thread, use the server socket
@@ -40,8 +39,6 @@ public class ServerThread extends Thread {
         try {
             System.out.println("Running thread");
             reader = new ObjectInputStream(socket.getInputStream());
-            writer = new PrintWriter(socket.getOutputStream());
-            writer.flush();
             objectWriter = new ObjectOutputStream(socket.getOutputStream());
             objectWriter.flush();
             String requestType = "";
@@ -55,7 +52,7 @@ public class ServerThread extends Thread {
             boolean fieldsEmpty = false;
             for (String field : requestBody) {
                 if (field.length() == 0) {
-                    sendStatus("emptyFields");
+                    sendData("emptyFields");
                     fieldsEmpty = true;
                     break;
                 }
@@ -67,12 +64,11 @@ public class ServerThread extends Thread {
                         int createStatus = manager.createAccount(requestBody[1], requestBody[2], requestBody[3],
                                 requestBody[4], requestBody[5], requestBody[6]);
                         if (createStatus == 1) {
-                            sendStatus("success");
-                            sendData(manager.getUser(requestBody[1]));
+                            sendData("success", manager.getUser(requestBody[1]));
                         } else if (createStatus == -1) {
-                            sendStatus("invalidUsername");
+                            sendData("invalidUsername");
                         } else {
-                            sendStatus("usernameExists");
+                            sendData("usernameExists");
                         }
                         break;
                     case ("updateAccount"):
@@ -82,77 +78,70 @@ public class ServerThread extends Thread {
                             int updateStatus = manager.updateAccount(requestBody[1], requestBody[2], requestBody[3],
                                     requestBody[4], requestBody[5]);
                             if (updateStatus == 1) {
-                                sendStatus("success");
-                                sendData(manager.getUser(requestBody[1]));
+                                sendData("success", manager.getUser(requestBody[1]));
                             } else if (updateStatus == -1) {
-                                sendStatus("usernameNotFound");
+                                sendData("usernameNotFound");
                             }
                         } else if (requestBody.length == 9) { // we are changing account info (username, password)
                             int updateStatus = manager.updateAccount(requestBody[1], requestBody[2], requestBody[3],
                                     requestBody[4], requestBody[5], requestBody[6], requestBody[7], requestBody[8]);
                             if (updateStatus == 1) {
-                                sendStatus("success");
-                                sendData(manager.getUser(requestBody[1]));
+                                sendData("success", manager.getUser(requestBody[1]));
                             } else if (updateStatus == -1) {
-                                sendStatus("invalidUsername");
+                                sendData("invalidUsername");
                             } else if (updateStatus == -2) {
-                                sendStatus("usernameExists");
+                                sendData("usernameExists");
                             } else if (updateStatus == -3) {
-                                sendStatus("incorrectPassword");
+                                sendData("incorrectPassword");
                             } else {
-                                sendStatus("usernameNotFound");
+                                sendData("usernameNotFound");
                             }
                         }
                         break;
                     case ("deleteAccount"):
                         int deleteStatus = manager.deleteAccount(requestBody[1], requestBody[2]);
-                        sendStatus(deleteStatus == 1 ? "success"
-                                : (deleteStatus == -1 ? "incorrectPassword" : "usernameNotFound"));
+                        sendData(deleteStatus == 1 ? "success" : (deleteStatus == -1 ? "incorrectPassword" : "usernameNotFound"));
                         break;
                     case ("loginUser"):
                         String username = requestBody[1];
                         String password = requestBody[2];
                         Account loginUser = manager.getUser(username);
                         if (loginUser == null) {
-                            sendStatus("usernameNotFound");
+                            sendData("usernameNotFound");
                         } else if (password.equals(loginUser.getPassword())) {
-                            sendStatus("success");
-                            sendData(loginUser);
+                            sendData("success", loginUser);
                         } else {
-                            sendStatus("incorrectPassword");
+                            sendData("incorrectPassword");
                         }
                         break;
                     case ("searchUsers"):
                         ArrayList<Account> usersFound = manager.searchUsers(requestBody[1]);
-                        sendData(usersFound);
+                        sendData("success", usersFound);
                         break;
                     case ("getUser"):
                         Account getUser = manager.getUser(requestBody[1]);
                         if (getUser == null) {
-                            sendStatus("usernameNotFound");
-                            sendData(getUser);
+                            sendData("usernameNotFound", getUser);
                         } else {
-                            sendStatus("success");
+                            sendData("success");
                         }
                         break;
                     case ("isFriendsWith"):
                         Account user1 = manager.getUser(requestBody[1]);
                         Account user2 = manager.getUser(requestBody[2]);
                         if (user1 != null && user2 != null) {
-                            sendStatus("success");
-                            sendData(user1.isFriendsWith(user2));
+                            sendData("success", user1.isFriendsWith(user2));
                         } else {
-                            sendStatus(user1 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user1 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     case ("hasRequested"):
                         Account user3 = manager.getUser(requestBody[1]);
                         Account user4 = manager.getUser(requestBody[2]);
                         if (user3 != null && user4 != null) {
-                            sendStatus("success");
-                            sendData(user3.hasRequested(user4));
+                            sendData("success", user3.hasRequested(user4));
                         } else {
-                            sendStatus(user3 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user3 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     case ("sendFriendRequest"):
@@ -160,10 +149,9 @@ public class ServerThread extends Thread {
                         Account user6 = manager.getUser(requestBody[2]);
                         if (user5 != null && user6 != null) {
                             user5.sendFriendRequest(user6);
-                            sendStatus("success");
-                            sendData(user5);
+                            sendData("success", user5);
                         } else {
-                            sendStatus(user5 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user5 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     case ("cancelFriendRequest"):
@@ -171,10 +159,9 @@ public class ServerThread extends Thread {
                         Account user8 = manager.getUser(requestBody[2]);
                         if (user7 != null && user8 != null) {
                             user7.cancelFriendRequest(user8);
-                            sendStatus("success");
-                            sendData(user7);
+                            sendData("success", user7);
                         } else {
-                            sendStatus(user7 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user7 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     case ("acceptFriendRequest"):
@@ -182,10 +169,9 @@ public class ServerThread extends Thread {
                         Account user10 = manager.getUser(requestBody[2]);
                         if (user9 != null && user10 != null) {
                             user9.acceptDeclineFriendRequest(user10, true);
-                            sendStatus("success");
-                            sendData(user9);
+                            sendData("success", user9);
                         } else {
-                            sendStatus(user9 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user9 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     case ("declineFriendRequest"):
@@ -193,10 +179,9 @@ public class ServerThread extends Thread {
                         Account user12 = manager.getUser(requestBody[2]);
                         if (user11 != null && user12 != null) {
                             user11.acceptDeclineFriendRequest(user12, false);
-                            sendStatus("success");
-                            sendData(user11);
+                            sendData("success", user11);
                         } else {
-                            sendStatus(user11 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user11 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     case ("removeFriend"):
@@ -204,20 +189,19 @@ public class ServerThread extends Thread {
                         Account user14 = manager.getUser(requestBody[2]);
                         if (user13 != null && user14 != null) {
                             user13.removeFriend(user14);
-                            sendStatus("success");
-                            sendData(user13);
+                            sendData("success", user13);
                         } else {
-                            sendStatus(user13 == null ? "usernameNotFound" : "username2NotFound");
+                            sendData(user13 == null ? "usernameNotFound" : "username2NotFound");
                         }
                         break;
                     default:
                         break;
                 }
             }
-            System.out.println("Request received!");
+            System.out.println(requestType + " request received!");
             socket.close();
             reader.close();
-            writer.close();
+            objectWriter.close();
             System.out.println("Closing thread...");
         } catch (IOException e) {
             e.printStackTrace();
@@ -228,19 +212,13 @@ public class ServerThread extends Thread {
         }
     }
 
-    private void sendStatus(String message) {
-        writer.write(message);
-        writer.println();
-        writer.flush();
-    }
-
-    private void sendData(Object data) throws IOException {
-        objectWriter.writeObject(data);
+    private void sendData(String status) throws IOException{
+        objectWriter.writeObject(new String[] { status });
         objectWriter.flush();
     }
 
-    private void sendData(boolean data) throws IOException {
-        objectWriter.writeBoolean(data);
+    private void sendData(String status, Object data) throws IOException {
+        objectWriter.writeObject(new Object[] { status, data });
         objectWriter.flush();
     }
 }
