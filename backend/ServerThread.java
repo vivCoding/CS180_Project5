@@ -2,6 +2,7 @@ package backend;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 /**
     * SesrverThread
@@ -12,6 +13,8 @@ import java.net.*;
     * @author Team 15-3, CS 180 - Merge
     * @version November 23, 2020
 */
+
+// TODO: getAllUsers()
 
 public class ServerThread extends Thread {
 
@@ -42,26 +45,24 @@ public class ServerThread extends Thread {
             objectWriter = new ObjectOutputStream(socket.getOutputStream());
             objectWriter.flush();
             String requestType = "";
-            System.out.println("Starting loop");
-            do {
-                // read request and the request type
-                // The first element in the array will always be the request type
-                System.out.println("Awaiting request...");
-                String[] requestBody = (String[]) reader.readObject();
-                requestType = requestBody[0];
-                // handle the request type, read parameters, call the appropriate functions
-                // first check if any fields are empty. If they are, no need to continue
-                boolean fieldsEmpty = false;
-                for (String field : requestBody) {
-                    if (field.length() == 0) {
-                        sendStatus("emptyFields");
-                        fieldsEmpty = true;
-                        break;
-                    }
+            // read request and the request type
+            // The first element in the array will always be the request type
+            System.out.println("Awaiting request...");
+            String[] requestBody = (String[]) reader.readObject();
+            requestType = requestBody[0];
+            // handle the request type, read parameters, call the appropriate functions
+            // first check if any fields are empty. If they are, no need to continue
+            boolean fieldsEmpty = false;
+            for (String field : requestBody) {
+                if (field.length() == 0) {
+                    sendStatus("emptyFields");
+                    fieldsEmpty = true;
+                    break;
                 }
-                if (!fieldsEmpty) {
-                    // if we have fields, parse the request depending on what it is
-                    switch (requestType) {
+            }
+            if (!fieldsEmpty) {
+                // if we have fields, parse the request depending on what it is
+                switch (requestType) {
                     case ("createAccount"):
                         int createStatus = manager.createAccount(requestBody[1], requestBody[2], requestBody[3],
                                 requestBody[4], requestBody[5], requestBody[6]);
@@ -120,6 +121,10 @@ public class ServerThread extends Thread {
                         } else {
                             sendStatus("incorrectPassword");
                         }
+                        break;
+                    case ("searchUsers"):
+                        ArrayList<Account> usersFound = manager.searchUsers(requestBody[1]);
+                        sendData(usersFound);
                         break;
                     case ("getUser"):
                         Account getUser = manager.getUser(requestBody[1]);
@@ -207,13 +212,13 @@ public class ServerThread extends Thread {
                         break;
                     default:
                         break;
-                    }
                 }
-            } while (!requestType.equals("closeSession"));
-            System.out.println("Thread stopped");
+            }
+            System.out.println("Request received!");
             socket.close();
             reader.close();
             writer.close();
+            System.out.println("Closing thread...");
         } catch (IOException e) {
             e.printStackTrace();
             return;

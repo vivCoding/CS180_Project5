@@ -47,7 +47,6 @@ public class Client { // TODO create friend and profile menus, establish all ser
     // io declaration
     public static Socket socket;
     public static BufferedReader reader;
-    public static PrintWriter writer;
     public static ObjectInputStream objectInput;
     public static ObjectOutputStream objectOut;
 
@@ -219,19 +218,20 @@ public class Client { // TODO create friend and profile menus, establish all ser
 
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
 
-        // find the server info so that the server host can be remote, or on a different
-        // port
-        serverHost = JOptionPane.showInputDialog(null, "Server Hostname", JOptionPane.QUESTION_MESSAGE);
-        serverPort = Integer.parseInt(JOptionPane.showInputDialog(null, "Server Port", JOptionPane.QUESTION_MESSAGE));
+        // find the server info so that the server host can be remote, or on a different port
+        // serverHost = JOptionPane.showInputDialog(null, "Server Hostname", JOptionPane.QUESTION_MESSAGE);
+        // serverPort = Integer.parseInt(JOptionPane.showInputDialog(null, "Server Port", JOptionPane.QUESTION_MESSAGE));
+        serverHost = "localhost";
+        serverPort = 4242;
         // connects to the server and shows confirmation
-        socket = new Socket(serverHost, serverPort);
-        JOptionPane.showInternalMessageDialog(null, "Successfully connected to server", "Connection Established",
-                JOptionPane.INFORMATION_MESSAGE);
+        // socket = new Socket(serverHost, serverPort);
+        // JOptionPane.showInternalMessageDialog(null, "Successfully connected to server", "Connection Established",
+        //         JOptionPane.INFORMATION_MESSAGE);
 
         // establishes IO method with server
-        objectOut = new ObjectOutputStream(socket.getOutputStream());
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        objectInput = new ObjectInputStream(socket.getInputStream());
+        // objectOut = new ObjectOutputStream(socket.getOutputStream());
+        // reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        // objectInput = new ObjectInputStream(socket.getInputStream());
 
         // creates server session
         // objectOut.writeObject(createSession);
@@ -262,7 +262,6 @@ public class Client { // TODO create friend and profile menus, establish all ser
             // creation, then hasAccount becomes true.
 
         } while (!hasAccount);
-
         // at this point client has connected to server and logged in
 
         // disconnect to better allow multiple clients, will reconnect for IO with
@@ -339,13 +338,13 @@ public class Client { // TODO create friend and profile menus, establish all ser
     public static void friendMenu() {
         JFrame friendFrame = new JFrame();
         boolean menuOpen = true;
-        int counter = 0;
-        do {
-            counter++;
-            if (counter > 10000) {
-                // update whatever is being viewed here
-            }
-        } while (menuOpen);
+        // int counter = 0;
+        // do {
+        //     counter++;
+        //     if (counter > 10000) {
+        //         // update whatever is being viewed here
+        //     }
+        // } while (menuOpen);
 
         Container content = friendFrame.getContentPane();
         content.setLayout(new BorderLayout());
@@ -499,13 +498,13 @@ public class Client { // TODO create friend and profile menus, establish all ser
     public static void profileMenu() throws ClassNotFoundException, IOException {
         JFrame profileFrame = new JFrame();
         boolean menuOpen = true;
-        int counter = 0;
-        do {
-            counter++;
-            if (counter > 10000) {
-                update();
-            }
-        } while (menuOpen);
+        // int counter = 0;
+        // do {
+        //     counter++;
+        //     if (counter > 10000) {
+        //         update();
+        //     }
+        // } while (menuOpen);
 
         JFrame profile = new JFrame();
         Container content = profile.getContentPane();
@@ -622,7 +621,7 @@ public class Client { // TODO create friend and profile menus, establish all ser
         String success = reader.readLine();
         switch (success) {
             // success code, initializes the user account
-            case "loginSuccessful":
+            case "success":
                 hasAccount = true;
                 user = (Account) objectInput.readObject();
                 break;
@@ -637,6 +636,7 @@ public class Client { // TODO create friend and profile menus, establish all ser
             case "incorrectPassword":
                 JOptionPane.showInternalMessageDialog(null, "Incorrect Password", "Password Error!",
                         JOptionPane.ERROR_MESSAGE);
+                break;
         }
         disconnectServer();
         return hasAccount;
@@ -1044,14 +1044,12 @@ public class Client { // TODO create friend and profile menus, establish all ser
     public static void disconnectServer() throws IOException {
         socket.close();
         reader.close();
-        writer.close();
         objectInput.close();
         objectOut.close();
     }
 
     public static void closeClient() throws IOException {
         connectServer();
-        objectOut.writeObject(closeSession);
         disconnectServer();
     }
 
@@ -1063,7 +1061,6 @@ public class Client { // TODO create friend and profile menus, establish all ser
             String[] deleteAccount = { "deleteAccount", accountName, pass };
             objectOut.writeObject(deleteAccount);
             disconnectServer();
-            closeClient();
             return true;
         }
         disconnectServer();

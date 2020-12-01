@@ -1,5 +1,6 @@
 package backend;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -97,6 +98,16 @@ public class Manager {
             return -1;
         }
         return -2;
+    }
+
+    public ArrayList<Account> searchUsers(String searchWord) {
+        ArrayList<Account> users = new ArrayList<Account>();
+        for (int i = 0; i < allUsers.size(); i++) {
+            if (allUsers.get(i).getUsername().contains(searchWord)) {
+                users.add(allUsers.get(i));
+            }
+        }
+        return users;
     }
 
     // method to easily find users by username
