@@ -8,13 +8,13 @@ public class ActionButton extends JButton {
     private Account account;
     private final int actionType;
     /*
-    0 - view profile
-    1 - remove friend
-    2 - cancel friend request
-    3 - accept friend request
-    4 - decline friend request
-    5 - send friend request
-     */
+        0 - view profile
+        1 - remove friend
+        2 - cancel friend request
+        3 - accept friend request
+        4 - decline friend request
+        5 - send friend request
+    */
 
     public ActionButton(String action, Account account, int actionType) {
         super(action);

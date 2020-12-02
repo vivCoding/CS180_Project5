@@ -18,9 +18,9 @@ import backend.Account;
  *
  * @author Team 15-3 CS 180 - Merge
  * @version November 26, 2020
- */
+*/
 
-public class Client { // TODO create friend and profile menus, establish all server requests
+public class Client {
     // user account variables
     private static String accountName;
     private static String pass;
@@ -62,9 +62,9 @@ public class Client { // TODO create friend and profile menus, establish all ser
                     // list 1 - friends
                     case "friend" -> actionsMenu(clickedButton.getAccount(), 1);
                     // list 2 - outgoing friend requests
-                    case "friendRequest" -> actionsMenu(clickedButton.getAccount(), 2);
+                    case "friendRequest" -> actionsMenu(clickedButton.getAccount(), 3);
                     // list 3 - incoming friend requests
-                    case "requestedFriend" -> actionsMenu(clickedButton.getAccount(), 3);
+                    case "requestedFriend" -> actionsMenu(clickedButton.getAccount(), 2);
                     // list 4 - found in search menu
                     case "searched" -> actionsMenu(clickedButton.getAccount(), 4);
                 }
@@ -222,25 +222,11 @@ public class Client { // TODO create friend and profile menus, establish all ser
         // serverPort = Integer.parseInt(JOptionPane.showInputDialog(null, "Server Port", JOptionPane.QUESTION_MESSAGE));
         serverHost = "localhost";
         serverPort = 4242;
-        // connects to the server and shows confirmation
-        // socket = new Socket(serverHost, serverPort);
-        // JOptionPane.showInternalMessageDialog(null, "Successfully connected to server", "Connection Established",
-        //         JOptionPane.INFORMATION_MESSAGE);
-
-        // establishes IO method with server
-        // objectOut = new ObjectOutputStream(socket.getOutputStream());
-        // reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        // objectInput = new ObjectInputStream(socket.getInputStream());
-
-        // creates server session
-        // objectOut.writeObject(createSession);
-        // objectOut.flush();
-        // String sessionCode = reader.readLine();
-        // System.out.println(sessionCode);
 
         boolean hasAccount = false;
         // creates a login or account creation request to send to the server
         String[] makeNew = { "Login", "Create new Account" };
+        // TODO: make login/createAccount cancelable
         do {
             String response = (String) JOptionPane.showInputDialog(null, "Login Prompt", "",
                     JOptionPane.QUESTION_MESSAGE, null, makeNew, makeNew[0]);
@@ -250,16 +236,12 @@ public class Client { // TODO create friend and profile menus, establish all ser
             if (response.equals("Login")) {
                 // send account name and pass to login
                 hasAccount = loginUser();
-
             } else {
                 // send account name and pass and do account setup
                 hasAccount = createAccount();
-
             }
-
             // if connection is established, and account login is valid / valid account
             // creation, then hasAccount becomes true.
-
         } while (!hasAccount);
         // at this point client has connected to server and logged in
 
@@ -274,39 +256,28 @@ public class Client { // TODO create friend and profile menus, establish all ser
         // succesfully deleted
         String[] menus = { "Friends", "Profile", "Search", "Close Client", "Delete Account" };
 
-        int counter = 0;
-        do {
-            counter++;
-            String menuChoice = (String) JOptionPane.showInputDialog(null, "Home", "", JOptionPane.QUESTION_MESSAGE,
-                    null, menus, menus[0]);
-            switch (menuChoice) {
-                case "Friends":
-                    friendMenu();
-                    break;
-                case "Profile":
-                    profileMenu();
-                    break;
-                case "Delete Account":
-                    if (deleteAccount()) {
-                        return;
-                    }
-                case "Search":
-                    searchMenu();
-                    break;
-                case "Close Client":
-                    // close all client resources here
-
-                    closeClient();
+        // TODO: keep home menu open
+        String menuChoice = (String) JOptionPane.showInputDialog(null, "Home", "", JOptionPane.QUESTION_MESSAGE,
+                null, menus, menus[0]);
+        switch (menuChoice) {
+            case "Friends":
+                friendMenu();
+                break;
+            case "Profile":
+                profileMenu();
+                break;
+            case "Delete Account":
+                if (deleteAccount()) {
                     return;
-            }
-
-            if (counter > 10000) {
-                counter = 0;
-                update();
-            }
-
-        } while (true);
-
+                }
+            case "Search":
+                searchMenu();
+                break;
+            case "Close Client":
+                // close all client resources here
+                closeClient();
+                return;
+        }
     }
 
     public static void searchMenu() throws IOException, ClassNotFoundException {
@@ -508,6 +479,7 @@ public class Client { // TODO create friend and profile menus, establish all ser
     }
 
     // method to open a window with the profile menu
+    // TODO: show all current friends
     public static void profileMenu() throws ClassNotFoundException, IOException {
         JFrame profileFrame = new JFrame();
         // boolean menuOpen = true;
@@ -656,6 +628,7 @@ public class Client { // TODO create friend and profile menus, establish all ser
         return hasAccount;
     }
 
+    // TODO: make cancelable
     public static boolean createAccount() throws ClassNotFoundException, IOException {
         connectServer();
         boolean hasAccount = false;
@@ -1048,6 +1021,7 @@ public class Client { // TODO create friend and profile menus, establish all ser
         return false;
     }
 
+    // TODO: if connection has error, send an error message
     public static void connectServer() throws UnknownHostException, IOException {
         socket = new Socket(serverHost, serverPort);
         // establishes IO method with server
@@ -1061,11 +1035,12 @@ public class Client { // TODO create friend and profile menus, establish all ser
         writer.close();
     }
 
-    // TODO: get rid of all GUIss
+    // TODO: get rid of all GUIs
     public static void closeClient() throws IOException {
         
     }
 
+    // TODO: return to login/createAccount menu when all done
     public static boolean deleteAccount() throws IOException {
         connectServer();
         int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?",

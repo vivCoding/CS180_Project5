@@ -31,14 +31,12 @@ public class ClientTest {
             message = scan.nextLine();
             objectOut.writeObject(message.split(" "));
             
-            // modify this depending on what u want
             Object[] response = (Object[]) objectIn.readObject();
             String status = (String) response[0];
-            System.out.println("Status: " + status);
-            ArrayList<Account> users = (ArrayList<Account>) response[1];
-            for (Account user : users) {
-                System.out.print(user.getUsername() + ", ");
-            }
+
+            // modify this depending on what u want
+            Account user = (Account) response[1];
+            System.out.println(user.getFriends().size());
             System.out.println("\n");
             disconnectServer();
         } while (!message.equals("closeClient"));
