@@ -11,7 +11,7 @@ import java.io.*;
     * The "model" of the entire system
     *
     * @author Team 15-3, CS 180 - Merge
-    * @version November 23, 2020
+    * @version December 2nd, 2020
 */
 
 public class Manager {
@@ -66,10 +66,11 @@ public class Manager {
     public int updateAccount (String username, String email, String phoneNumber, String bio, String interests) {
         int i = findUser(username);
         if (i != -1) {
-            allUsers.get(i).setEmail(email);
-            allUsers.get(i).setPhoneNumber(phoneNumber);
-            allUsers.get(i).setBio(bio);
-            allUsers.get(i).setInterests(interests);
+            Account user = allUsers.get(i);
+            user.setEmail(email);
+            user.setPhoneNumber(phoneNumber);
+            user.setBio(bio);
+            user.setInterests(interests);
             return 1;
         }
         return -1;
@@ -85,10 +86,13 @@ public class Manager {
             } else if (findUser(newUsername) != -1) {
                 return -2;
             } else if (currentPassword.equals(allUsers.get(i).getPassword())) {
-                allUsers.get(i).setEmail(email);
-                allUsers.get(i).setPhoneNumber(phoneNumber);
-                allUsers.get(i).setBio(bio);
-                allUsers.get(i).setInterests(interests);
+                Account user = allUsers.get(i);
+                user.setUsername(newUsername);
+                user.setPassword(newPassword);
+                user.setEmail(email);
+                user.setPhoneNumber(phoneNumber);
+                user.setBio(bio);
+                user.setInterests(interests);
                 return 1;
             }
             return -3;
