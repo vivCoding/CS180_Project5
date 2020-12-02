@@ -28,6 +28,7 @@ public class Server {
         // Starting up our database/manageer/model
         Manager manager = new Manager();
 
+        // when server is terminated/interrupted all of a sudden, quickly save files
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 System.out.println("Server has ended");

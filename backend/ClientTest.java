@@ -26,19 +26,18 @@ public class ClientTest {
 
         String message;
         do {
-            connectServer();
             System.out.print("Send message to server: ");
             message = scan.nextLine();
+            connectServer();
             objectOut.writeObject(message.split(" "));
-            
             Object[] response = (Object[]) objectIn.readObject();
+            disconnectServer();
             String status = (String) response[0];
 
             // modify this depending on what u want
             Account user = (Account) response[1];
             System.out.println(user.getFriends().size());
             System.out.println("\n");
-            disconnectServer();
         } while (!message.equals("closeClient"));
 
         scan.close();
