@@ -43,7 +43,7 @@ public class NewClient {
     private static JTextField oldPasswordTxtField;
     private static JTextField newPasswordTxtField;
 
-    // defines the button actions
+    // defines ALL of the possible button actions
     public static enum Action {
         ViewProfile, ViewFriends,
         EditAccount, UpdateAccount, DeleteAccount,
@@ -54,7 +54,7 @@ public class NewClient {
 
     /*
         * There are several actions that we can perform after we listen
-        * The action is based on the Action enum
+        * The action depends on what the Action enum assigned to the JAButton
     */
     public static ActionListener actionListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -63,22 +63,25 @@ public class NewClient {
                 JAButton source = (JAButton) e.getSource();
                 Action buttonAction = source.getActionType();
                 switch (buttonAction) {
+                    // if view profile button was pressed, show profile window
+                    // based on what account the button is linked to
                     case ViewProfile -> {
-                        // if view profile button was pressed, show profile window
                         showProfile(source.getAccountName());
                     }
+                    // if view friends button was pressed, show friends list window
+                    // based on what account the button is linked to
                     case ViewFriends -> {
-                        // if view friends button was pressed, show friends list window
                         showFriendsList(source.getAccountName());
                     }
+                    // if edit profile button was pressed, show profile window. Can only be shown for current user
                     case EditAccount -> {
-                        // if edit profile button was pressed, show profile window for this current user
                         showEditProfile();
                     }
+                    // if saved changes button was pressed, send new info request to server. Can only be used for current user
                     case UpdateAccount -> {
-                        // if saved changes button was pressed, send new info request to server
                         Object[] response;
                         // if old password, new password, and new username are blank, that means we're not updating them
+                        // send request that only updates email, phoneNumber, bio, and interests
                         if (oldPasswordTxtField.getText().equals("")
                             && newPasswordTxtField.getText().equals("")
                             && newUsernameTxtField.getText().equals("")
@@ -90,7 +93,8 @@ public class NewClient {
                             };
                             response = ClientRequest.sendToServer(request);
                         } else {
-                            // else, if they are not blank, we are updating them
+                            // else, if they are not blank, we are updating password and username
+                            // send a request to include everything
                             String[] request = new String[] {
                                 "updateAccount", currentUser.getUsername(),
                                 emailTxtField.getText(), phoneNumberTxtField.getText(),
@@ -121,15 +125,29 @@ public class NewClient {
                             case "emptyFields":
                                 JOptionPane.showMessageDialog(null, "Account information cannot be empty!", "Error!", JOptionPane.ERROR_MESSAGE);
                                 break;
+                            case "connectionFailed":
+                                showConnectionError();
+                                break;
                         }
                     }
+                    // If user pressed delete account button, confirm if they want to delete. If so, proceed with operation
+                    // Can only be shown with current user
                     case DeleteAccount -> {
                         int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account? This cannot be undone.", "Delete Account?", JOptionPane.YES_NO_OPTION);
                         if (confirm == JOptionPane.YES_OPTION) {
-                            ClientRequest.sendToServer(new String[] { "deleteAccount", currentUser.getUsername(), currentUser.getPassword() });
-                            System.exit(1);
+                            String status = (String) ClientRequest.sendToServer(new String[] { "deleteAccount", currentUser.getUsername(), currentUser.getPassword() })[0];
+                            switch (status) {
+                                case "success":
+                                    JOptionPane.showMessageDialog(null, "Account successfully delete! Program will close now...", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                    break;
+                                case "connectionFailed":
+                                    showConnectionError();
+                                    break;
+                            }
                         }
                     }
+                    // If user pressed the friend request button, do a server request,
+                    // where we send a friend request from the current user to the account linked to the JAButton. 
                     case SendFriendRequest -> {
                         Object[] response = ClientRequest.sendToServer(new String[] { "sendFriendRequest", currentUser.getUsername(), source.getAccountName() });
                         String status = (String) response[0];
@@ -138,22 +156,82 @@ public class NewClient {
                                 currentUser = (Account) response[1];
                                 JOptionPane.showMessageDialog(null, "Friend request sent!", "Success", JOptionPane.INFORMATION_MESSAGE);
                                 break;
+                            case "connectionFailed":
+                                showConnectionError();
+                                break;
                             default:
                                 JOptionPane.showMessageDialog(null, "Unable to send friend request", "Error", JOptionPane.INFORMATION_MESSAGE);
                                 break;
                         }
                     }
+                    // If user pressed the cancel friend request button, do a server request,
+                    // where we cancel a friend request sent from current user to the account linked to the JAButton.
                     case CancelFriendRequest -> {
-
+                        Object[] response = ClientRequest.sendToServer(new String[] { "cancelFriendRequest", currentUser.getUsername(), source.getAccountName() });
+                        String status = (String) response[0];
+                        switch (status) {
+                            case "success":
+                                currentUser = (Account) response[1];
+                                JOptionPane.showMessageDialog(null, "Friend request canceled!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                            case "connectionFailed":
+                                showConnectionError();
+                                break;
+                            default:
+                                JOptionPane.showMessageDialog(null, "Could not cancel friend request", "Error", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                        }
                     }
+                    // If user pressed the accept friend request button, do a server request, and check status
                     case AcceptFriendRequest -> {
-
+                        Object[] response = ClientRequest.sendToServer(new String[] { "acceptFriendRequest", currentUser.getUsername(), source.getAccountName() });
+                        String status = (String) response[0];
+                        switch (status) {
+                            case "success":
+                                currentUser = (Account) response[1];
+                                JOptionPane.showMessageDialog(null, "Friend request accepted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                            case "connectionFailed":
+                                showConnectionError();
+                                break;
+                            default:
+                                JOptionPane.showMessageDialog(null, "Could not accept friend request", "Error", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                        }
                     }
+                    // If user pressed the decline friend request button, do a server request. Check status
                     case DeclineFriendRequest -> {
-
+                        Object[] response = ClientRequest.sendToServer(new String[] { "declineFriendRequest", currentUser.getUsername(), source.getAccountName() });
+                        String status = (String) response[0];
+                        switch (status) {
+                            case "success":
+                                currentUser = (Account) response[1];
+                                JOptionPane.showMessageDialog(null, "Friend request declined!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                            case "connectionFailed":
+                                showConnectionError();
+                                break;
+                            default:
+                                JOptionPane.showMessageDialog(null, "Could not decline friend request", "Error", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                        }
                     }
+                    // If user pressed the remove friend request button, do a server request. Check status
                     case RemoveFriend -> {
-
+                        Object[] response = ClientRequest.sendToServer(new String[] { "removeFriend", currentUser.getUsername(), source.getAccountName() });
+                        String status = (String) response[0];
+                        switch (status) {
+                            case "success":
+                                currentUser = (Account) response[1];
+                                JOptionPane.showMessageDialog(null, "Friend removed!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                            case "connectionFailed":
+                                showConnectionError();
+                                break;
+                            default:
+                                JOptionPane.showMessageDialog(null, "Could not remove friend request", "Error", JOptionPane.INFORMATION_MESSAGE);
+                                break;
+                        }
                     }
                     case SearchFriends -> {
 
@@ -303,8 +381,8 @@ public class NewClient {
         * If this user is the currentUser, allow editProfile abilities
         * Else, if it is a different user, allow the ability to view their friends request them
     */
-    public static void showProfile(String usernameToShow) {
-        Object[] response = ClientRequest.sendToServer(new String[] { "getUser", usernameToShow });
+    public static void showProfile(String username) {
+        Object[] response = ClientRequest.sendToServer(new String[] { "getUser", username });
         String status = (String) response[0];
         if (status.equals("success")) {
             Account user = (Account) response[1];
@@ -319,12 +397,12 @@ public class NewClient {
             panel.add(header, BorderLayout.NORTH);
             panel.add(Box.createVerticalStrut(10));
 
-            JLabel username = new JLabel("Username: " + user.getUsername(), SwingConstants.CENTER);
+            JLabel usernameToShow = new JLabel("Username: " + user.getUsername(), SwingConstants.CENTER);
             JLabel email = new JLabel("Email: " + user.getEmail(), SwingConstants.CENTER);
             JLabel phoneNumber = new JLabel("Phone Number: " + user.getPhoneNumber(), SwingConstants.CENTER);
             JLabel bio = new JLabel("Biography: " + user.getBio(), SwingConstants.CENTER);
             JLabel interests = new JLabel("Interests: " + user.getInterests(), SwingConstants.CENTER);
-            panel.add(username);
+            panel.add(usernameToShow);
             panel.add(Box.createVerticalStrut(10));
             panel.add(email);
             panel.add(Box.createVerticalStrut(10));
@@ -335,7 +413,8 @@ public class NewClient {
             panel.add(interests);
             panel.add(Box.createVerticalStrut(10));
 
-            if (usernameToShow.equals(currentUser.getUsername())) {
+            // if the user we are viewing is the current user, show edit and delete account features
+            if (username.equals(currentUser.getUsername())) {
                 JAButton editProfile = new JAButton("Edit Account", Action.EditAccount);
                 editProfile.addActionListener(actionListener);
                 JAButton deleteAccountButton = new JAButton("Delete Account", Action.DeleteAccount);
@@ -343,39 +422,41 @@ public class NewClient {
                 panel.add(editProfile);
                 panel.add(deleteAccountButton);
             } else {
-                JAButton viewFriends = new JAButton("View Friends", usernameToShow, Action.ViewFriends);
+                // if it is anothe user, allow the ability to view their friends
+                JAButton viewFriends = new JAButton("View Friends", username, Action.ViewFriends);
                 viewFriends.addActionListener(actionListener);
                 panel.add(viewFriends);
+                // also add ability to remove friend or send/cancel/accept/decline friend requests
                 // first check if we are friends with them
-                Object[] isFriendsResponse = ClientRequest.sendToServer(new String[] { "isFriendsWith", currentUser.getUsername(), usernameToShow });
+                Object[] isFriendsResponse = ClientRequest.sendToServer(new String[] { "isFriendsWith", currentUser.getUsername(), username });
                 String isFriendsStatus = (String) isFriendsResponse[0];
                 if (isFriendsStatus.equals("success")) {
                     // if we are friends with them, add option to remove the friend
                     if ((boolean) isFriendsResponse[1]) {
-                        JAButton removeFriend = new JAButton("Remove Friend", Action.RemoveFriend);
+                        JAButton removeFriend = new JAButton("Remove Friend", username, Action.RemoveFriend);
                         removeFriend.addActionListener(actionListener);
                         panel.add(removeFriend);
                     } else {
-                        // since, we're not friends with them, check if we have requested user or if we are friends with them, 
-                        Object[] hasRequestedResponse = ClientRequest.sendToServer(new String[] { "hasRequested", currentUser.getUsername(), usernameToShow });
+                        // if we're not friends with them, check if we have requested user or if we are friends with them, 
+                        Object[] hasRequestedResponse = ClientRequest.sendToServer(new String[] { "hasRequested", currentUser.getUsername(), username });
                         String hasRequestedStatus = (String) hasRequestedResponse[0];
                         if (hasRequestedStatus.equals("success")) {
                             // if we have not requested them, first check if they have requested us
                             if (!(boolean) hasRequestedResponse[1]) {
                                 // check if they have requested us, in which we show "Accept" or "Decline"
-                                hasRequestedResponse = ClientRequest.sendToServer(new String[] { "hasRequested", usernameToShow, currentUser.getUsername() });
+                                hasRequestedResponse = ClientRequest.sendToServer(new String[] { "hasRequested", username, currentUser.getUsername() });
                                 hasRequestedStatus = (String) hasRequestedResponse[0];
                                 if (hasRequestedStatus.equals("success")) {
                                     if ((boolean) hasRequestedResponse[1]) {
-                                        JAButton acceptFriendRequest = new JAButton("Accept Friend Request", Action.AcceptFriendRequest);
+                                        JAButton acceptFriendRequest = new JAButton("Accept Friend Request", username, Action.AcceptFriendRequest);
                                         acceptFriendRequest.addActionListener(actionListener);
-                                        JAButton declineFriendRequest = new JAButton("Decline Friend Request", Action.DeclineFriendRequest);
+                                        JAButton declineFriendRequest = new JAButton("Decline Friend Request", username, Action.DeclineFriendRequest);
                                         declineFriendRequest.addActionListener(actionListener);
                                         panel.add(acceptFriendRequest);
                                         panel.add(declineFriendRequest);
                                     } else {
                                         // else, we know that they havent requested us, and we havent requested them
-                                        JAButton requestFriend = new JAButton("Send Friend Request", usernameToShow, Action.SendFriendRequest);
+                                        JAButton requestFriend = new JAButton("Send Friend Request", username, Action.SendFriendRequest);
                                         requestFriend.addActionListener(actionListener);
                                         panel.add(requestFriend);
                                     }
@@ -384,7 +465,7 @@ public class NewClient {
                                 }
                             } else {
                                 // if we have requested, give option to cancel request
-                                JAButton cancelRequest = new JAButton("Cancel Friend Request", usernameToShow, Action.CancelFriendRequest);
+                                JAButton cancelRequest = new JAButton("Cancel Friend Request", username, Action.CancelFriendRequest);
                                 cancelRequest.addActionListener(actionListener);
                                 panel.add(cancelRequest);
                             }
@@ -573,7 +654,6 @@ public class NewClient {
                 }
                 content.add(requestedFriendsPanel, BorderLayout.EAST);
             }
-            
 
             friendsList.setTitle("Friends List");
             friendsList.setSize(600, 700);
