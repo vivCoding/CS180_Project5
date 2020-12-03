@@ -645,6 +645,7 @@ public class NewClient {
                 friendRequestsPanel.setBorder(padding);
                 friendRequestsPanel.setLayout(new BoxLayout(friendRequestsPanel, BoxLayout.Y_AXIS));
                 JLabel friendRequestsHeader = new JLabel("Friend Requests", SwingConstants.CENTER);
+                friendRequestsHeader.setFont(subTitleFont);
                 friendRequestsPanel.add(friendRequestsHeader, BorderLayout.NORTH);
                 if (user.getFriendRequests().size() != 0) {
                     for (Account friendRequest : user.getFriendRequests()) {
@@ -664,6 +665,7 @@ public class NewClient {
                 requestedFriendsPanel.setBorder(padding);
                 requestedFriendsPanel.setLayout(new BoxLayout(requestedFriendsPanel, BoxLayout.Y_AXIS));
                 JLabel requestedFriendHeader = new JLabel("Requested Friends", SwingConstants.CENTER);
+                requestedFriendHeader.setFont(subTitleFont);
                 requestedFriendsPanel.add(requestedFriendHeader, BorderLayout.NORTH);
                 if (user.getRequestedFriends().size() != 0) {
                     for (Account requestedFriend : user.getRequestedFriends()) {
