@@ -443,7 +443,7 @@ public class NewClient {
                 panel.add(editProfile);
                 panel.add(deleteAccountButton);
             } else {
-                // if it is anothe user, allow the ability to view their friends
+                // if it is another user, allow the ability to view their friends
                 JAButton viewFriends = new JAButton("View Friends", username, Action.ViewFriends);
                 viewFriends.addActionListener(actionListener);
                 panel.add(viewFriends);
@@ -476,7 +476,7 @@ public class NewClient {
                                         panel.add(acceptFriendRequest);
                                         panel.add(declineFriendRequest);
                                     } else {
-                                        // else, we know that they havent requested us, and we havent requested them
+                                        // else, we know that they haven't requested us, and we haven't requested them
                                         JAButton requestFriend = new JAButton("Send Friend Request", username, Action.SendFriendRequest);
                                         requestFriend.addActionListener(actionListener);
                                         panel.add(requestFriend);
@@ -740,7 +740,7 @@ public class NewClient {
         Object response[] = sendToServer(new String[] { "searchUsers", searchWord });
         String status = (String) response[0];
         if (status.equals("success")) {
-            // If there are results, show them. Otherewise, no results, show a simple message
+            // If there are results, show them. Otherwise, no results, show a simple message
             ArrayList<Account> users = (ArrayList<Account>) response[1];
             if (users.size() != 0) {
                 // setting up the window, layout, and padding
