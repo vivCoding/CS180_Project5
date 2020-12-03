@@ -146,6 +146,7 @@ public class NewClient {
                             switch (status) {
                                 case "success":
                                     JOptionPane.showMessageDialog(null, "Account successfully delete! Program will close now...", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                    System.exit(1);
                                     break;
                                 case "connectionFailed":
                                     showConnectionError();
