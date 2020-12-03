@@ -22,33 +22,33 @@ import backend.Account;
 public class Client {
 
     // io declaration
-    private Socket socket;
-    private ObjectOutputStream writer;
-    private ObjectInputStream reader;
+    private static Socket socket;
+    private static ObjectOutputStream writer;
+    private static ObjectInputStream reader;
 
     // server connection constants
-    private final String serverHost = "localhost";
-    private final int serverPort = 4242;
+    private static final String serverHost = "localhost";
+    private static final int serverPort = 4242;
 
     // storing the current client signed in on client side
-    private Account currentUser;
+    private static Account currentUser;
 
     // gui constants
-    private final Font titleFont = new Font("Arial", 1, 20);
-    private final Font subTitleFont = new Font("Arial", 1, 15);
-    private final EmptyBorder padding = new EmptyBorder(10, 10, 10, 10);
+    private static final Font titleFont = new Font("Arial", 1, 20);
+    private static final Font subTitleFont = new Font("Arial", 1, 15);
+    private static final EmptyBorder padding = new EmptyBorder(10, 10, 10, 10);
 
     // edit account fields
-    private JTextField phoneNumberTxtField;
-    private JTextField emailTxtField;
-    private JTextField bioTxtField;
-    private JTextField interestsTxtField;
-    private JTextField newUsernameTxtField;
-    private JTextField oldPasswordTxtField;
-    private JTextField newPasswordTxtField;
+    private static JTextField phoneNumberTxtField;
+    private static JTextField emailTxtField;
+    private static JTextField bioTxtField;
+    private static JTextField interestsTxtField;
+    private static JTextField newUsernameTxtField;
+    private static JTextField oldPasswordTxtField;
+    private static JTextField newPasswordTxtField;
 
     // search user fields
-    private JTextField searchField;
+    private static JTextField searchField;
 
     // defines ALL of the possible button actions
     public enum Action {
@@ -63,7 +63,7 @@ public class Client {
         * There are several actions that we can perform after we listen
         * The action depends on what the Action enum assigned to the JAButton
     */
-    public ActionListener actionListener = new ActionListener() {
+    public static ActionListener actionListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() instanceof JAButton) {
                 // We are using the button's text to determine the action required
@@ -73,7 +73,7 @@ public class Client {
                     // if view profile button was pressed, show profile window
                     // based on what account the button is linked to
                     case ViewProfile -> {
-                        showProfile(source.getAccountName());
+                        new Thread(() -> showProfile(source.getAccountName())).start();
                     }
                     // if view friends button was pressed, show friends list window
                     // based on what account the button is linked to
@@ -260,9 +260,8 @@ public class Client {
         }
     };
 
-    public void run() {
-        System.out.println("Starting program...");
-
+    public static void main(String[] args) {
+        System.out.println("Starting client...");
         // loop until user cancels at start menu or enters valid user info
         while (true) {
             int loginOrCreate = startingMenu();
@@ -279,7 +278,7 @@ public class Client {
         First menu that shows when program is opened. Give user the choice to login or create account
         Returns 0 to login, 1 to createAccount, -1 to close window
     */
-    public int startingMenu() {
+    public static int startingMenu() {
         String[] options = { "Login", "Create New Account" };
         int result = JOptionPane.showOptionDialog(null, "Welcome to the Friends App!", "Friends App", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         return result;
@@ -290,8 +289,7 @@ public class Client {
         * Return true if successful, false if error occurred or user wants to cancel
         * If there are errors, show appropriate message dialogs
     */
-    public boolean login() {
-        System.out.println("Logging in...");
+    public static boolean login() {
         String username = JOptionPane.showInputDialog(null, "Username", JOptionPane.QUESTION_MESSAGE);
         // if user clicked cancel, return to start menu
         if (username == null) return false;
@@ -323,8 +321,7 @@ public class Client {
         * Return true if successful, false if error occurred or user wants to cancel
         * If there are errors, show appropriate message dialogs
     */
-    public boolean createAccount() {
-        System.out.println("Creating new account...");
+    public static boolean createAccount() {
         String username = JOptionPane.showInputDialog(null, "Enter a username", JOptionPane.QUESTION_MESSAGE);
         if (username == null) return false;
         String password = JOptionPane.showInputDialog(null, "Enter a password", JOptionPane.QUESTION_MESSAGE);
@@ -363,7 +360,7 @@ public class Client {
         * The main menu that the user will see once successfully logged in
         * Can view friends list, view profile, search new people, and delete account
     */
-    public void showMainMenu() {
+    public static void showMainMenu() {
         // initial setup
         JFrame mainMenu = new JFrame();
         Container content = mainMenu.getContentPane();
@@ -403,7 +400,7 @@ public class Client {
         * If this user is the currentUser, allow editProfile abilities
         * Else, if it is a different user, allow the ability to view their friends request them
     */
-    public void showProfile(String username) {
+    public static void showProfile(String username) {
         Object[] response = sendToServer(new String[] { "getUser", username });
         String status = (String) response[0];
         if (status.equals("success")) {
@@ -519,7 +516,7 @@ public class Client {
         * Note: this only allows the user to edit ONLY their own profile
         * unlike the other functions that can display for different users
     */
-    public void showEditProfile() {
+    public static void showEditProfile() {
         JFrame editProfile = new JFrame();
         Container content = editProfile.getContentPane();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
@@ -607,7 +604,7 @@ public class Client {
         Friends list window shows a list of the user's current friends,
         friend requests, and requested friends
     */
-    public void showFriendsList(String username) {
+    public static void showFriendsList(String username) {
         Object[] response = sendToServer(new String[] { "getUser", username });
         String status = (String) response[0];
         if (status.equals("success")) {
@@ -629,8 +626,7 @@ public class Client {
             currentFriendsPanel.add(friendsHeader, BorderLayout.NORTH);
             if (user.getFriends().size() != 0) {
                 for (Account friend : user.getFriends()) {
-                    JAButton friendButton = new JAButton(friend.getUsername(), friend.getUsername(),
-                            Action.ViewProfile);
+                    JAButton friendButton = new JAButton(friend.getUsername(), friend.getUsername(), Action.ViewProfile);
                     friendButton.addActionListener(actionListener);
                     currentFriendsPanel.add(friendButton, BorderLayout.CENTER);
                 }
@@ -698,7 +694,7 @@ public class Client {
     /*
         Window to show the search bar and search button, but NOT the search results
     */
-    public void showSearchMenu() {
+    public static void showSearchMenu() {
         // initial setup, layout, and padding
         JFrame searchMenu = new JFrame();
         Container content = searchMenu.getContentPane();
@@ -739,7 +735,7 @@ public class Client {
     /*
         Window to show the search results (comes after user has pressed the search button)
     */
-    public void showSearchResults(String searchWord) {
+    public static void showSearchResults(String searchWord) {
         Object response[] = sendToServer(new String[] { "searchUsers", searchWord });
         String status = (String) response[0];
         if (status.equals("success")) {
@@ -784,12 +780,12 @@ public class Client {
     }
 
     // shown whenever we are unable to connect to the server
-    public void showConnectionError() {
+    public static void showConnectionError() {
         JOptionPane.showMessageDialog(null, "Could not connect to server!", "Connection Error!", JOptionPane.ERROR_MESSAGE);
     }
 
     // try to send data. If connection failed, return connectionFailed status code
-    public Object[] sendToServer(Object[] request) {
+    public static Object[] sendToServer(Object[] request) {
         try {
             socket = new Socket(serverHost, serverPort);
             writer = new ObjectOutputStream(socket.getOutputStream());
@@ -819,9 +815,5 @@ public class Client {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args) {
-        new Client().run();
     }
 }
