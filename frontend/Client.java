@@ -49,6 +49,10 @@ public class Client {
     private static JTextField oldPasswordTxtField;
     private static JTextField newPasswordTxtField;
 
+    // deleting account, used to determine whether or not
+    // to keep updating the windows. If user is deleting, don't update windows
+    private static boolean deletingAccount = false;
+
     // search user fields
     private static JTextField searchField;
 
@@ -148,6 +152,7 @@ public class Client {
                             String status = (String) sendToServer(new String[] { "deleteAccount", currentUser.getUsername(), currentUser.getPassword() })[0];
                             switch (status) {
                                 case "success":
+                                    deletingAccount = true;
                                     JOptionPane.showMessageDialog(null, "Account successfully delete! Program will close now...", "Success", JOptionPane.INFORMATION_MESSAGE);
                                     System.exit(1);
                                     break;
@@ -391,7 +396,7 @@ public class Client {
 
         // continuosly keep this window updated (in case account info was updated)
         new Thread(() -> {
-            while (mainMenu.isVisible()) {
+            while (mainMenu.isVisible() && !deletingAccount) {
                 // check to see if our current user was updated/edited, and update header and buttons
                 Object[] response = sendToServer(new String[] { "getUser", currentUser.getUsername() });
                 String status = (String) response[0];
@@ -482,7 +487,7 @@ public class Client {
 
         // continuously refresh the content of window until it is closed
         new Thread(() -> {
-            while (profileWindow.isVisible()) {
+            while (profileWindow.isVisible() && !deletingAccount) {
                 // request the data from server to update any new info
                 Object[] response = sendToServer(new String[] { "getUser", username });
                 String status = (String) response[0];
@@ -699,7 +704,7 @@ public class Client {
 
         // continuously refresh the content of window until it is closed
         new Thread(() -> {
-            while (friendsList.isVisible()) {
+            while (friendsList.isVisible() && !deletingAccount) {
                 Object[] response = sendToServer(new String[] { "getUser", username });
                 String status = (String) response[0];
                 if (status.equals("success")) {
@@ -861,7 +866,7 @@ public class Client {
 
         // continuously refresh the content of window until it is closed
         new Thread(() -> {
-            while (resultsWindow.isVisible()) {
+            while (resultsWindow.isVisible() && !deletingAccount) {
                 Object response[] = sendToServer(new String[] { "searchUsers", searchWord });
                 String status = (String) response[0];
                 if (status.equals("success")) {
@@ -899,7 +904,7 @@ public class Client {
 
     // shown whenever we are unable to connect to the server
     public static void showConnectionError() {
-        JOptionPane.showMessageDialog(null, "Could not connect to server!", "Connection Error!", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Could not connect to server. Please try again later!", "Connection Error!", JOptionPane.ERROR_MESSAGE);
     }
 
     // try to send data. If connection failed, return connectionFailed status code
