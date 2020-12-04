@@ -32,6 +32,10 @@ public class JAButton extends JButton {
         return accountName;
     }
 
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
     public Client.Action getActionType() {
         return this.action;
     }
