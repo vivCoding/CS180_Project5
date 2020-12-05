@@ -48,4 +48,7 @@
 		* Removes friend from list and unfriends the person. 1 returned if successful and -1 else.
 	* userInList
 		* Helps find a certain user in a list. Index in the list is returned if the user exists and else, -1 is returned.
-	
+* Manager Class:
+	* This class acts as a database for storing all accounts and manages retrieval of of specific accounts. Serves as the backbone of the backend.
+	* Constructor
+		*
