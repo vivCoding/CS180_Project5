@@ -79,4 +79,6 @@
 	think of this class as the control room of the whole application.
 	* main
 		* Creates the server and starts the manager class (database). Also handles creation of multiple sessions for clients to interact with the server.
-
+* **Server Thread Class:**
+	* This class handles the authentication, requests and used to avoid overloading the server.
+	* 
