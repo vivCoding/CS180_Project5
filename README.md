@@ -89,18 +89,20 @@
 		* Sends a status update.
 	* sendData
 		* Is an overloaded method to sendData; sends data and a status update.
-* **Action Button Class:**
-	* Filler Text
+* **JA Button Class:**
+	* Serves as an extension to the regular JButton and allows for assigning user accounts to a JButton.
 	* Constructor
-		* Filler Text
-	* getAccount
-		* Gets the account.
-	* setAccount
-		* Sets the account.
+		* Makes a regular JButton but adds a client action.
+	* Constructor
+		* Is an overloaded contructor that makes a regular JButton but adds a client action and account name.
+	* getAccountName
+		* Gets the account name.
+	* setAccountName
+		* Sets the account name.
 	* getActionType
 		* Gets the action type.
-* **Username Button Class:**
-	* Filler Text
-	* Constructor
-		* Filler Text
+	* setActionType
+		* Sets the action type.
+* **Client Class:**
 	*
+	
