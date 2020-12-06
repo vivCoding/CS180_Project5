@@ -81,4 +81,13 @@
 		* Creates the server and starts the manager class (database). Also handles creation of multiple sessions for clients to interact with the server.
 * **Server Thread Class:**
 	* This class handles the authentication, requests and used to avoid overloading the server.
-	* 
+	* Constructor
+		* Instantiates a new server thread and a new manager.
+	* run
+		* Instantiates the readers and writers and allows for information transfer and status updates to be sent from the client to the server.
+	* sendData
+		* Sends a status update.
+	* sendData
+		* Is an overloaded method to sendData; sends data and a status update.
+* **Action Button Class:**
+	*
