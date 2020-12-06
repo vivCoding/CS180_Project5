@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.ArrayList;
 
 /**
-    * SesrverThread
+    * ServerThread
     *
     * A server thread. Handles requests, and authentication
     * Used to avoid overloading the server
