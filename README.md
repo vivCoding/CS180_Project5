@@ -122,4 +122,6 @@
 		* Creates the main menu. Using this menu, the user can access the friends list, the account profile and search for other accounts. Also keeps the menu updated in 
 		case account information was updated.
 	* showProfile
-		* 
+		* Shows the user profile in a new window. If the person viewing the profile is the user, allows for the editing of account info. If the person view the
+		profile is another user then allows the person to view the friends list and to send a friend request to the profile they are viewing. Updates real time.
+	* 
