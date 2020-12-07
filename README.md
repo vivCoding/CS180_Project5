@@ -18,6 +18,7 @@ To run server, `java backend/Server`. To run client, `java frontend/Client`
 * **Account Class:**
 	* This class is called to hold information regarding any info in a user's account.
 	* Testing done on this class is through JUnit tests in RunLocalTest.java.
+		* JUnit tests check that all methods and fields are declared properly, then attempt to call a method with both valid and invalid parameters when applicable for funcitonality
   	* Constructor
     	* The constructor sets parameters equal to private variables in the class and also initializes 3 Account arrayLists. Parameters include String username, String password,
 		String email, String phoneNumber, String bio, and String interests. The arrayLists initialized are friends, friendRequests, and requestedFriends. 
@@ -66,6 +67,7 @@ To run server, `java backend/Server`. To run client, `java frontend/Client`
 * **Manager Class:**
 	* This class acts as a database for storing all accounts and manages retrieval of of specific accounts. Serves as the backbone of the backend.
 	* Testing done on this class is through JUnit tests in RunLocalTest.java.
+		* JUnit tests check that all methods and fields are declared properly, then attempt to call a method with both valid and invalid parameters when applicable for funcitonality
 	* Constructor
 		* Reads in allUsers.txt file and if the file doesn't exist, creates a new file callde allUsers.txt.
 	* getAllUsers
@@ -98,6 +100,7 @@ To run server, `java backend/Server`. To run client, `java frontend/Client`
 * **Server Thread Class:**
 	* This class handles the authentication, requests and used to avoid overloading the server.
 	* Testing done on this class is through JUnit tests in RunLocalTest.java.
+		* JUnit tests check that all methods and fields are declared properly, then attempt to call a method with both valid and invalid parameters when applicable for funcitonality
 	* Constructor
 		* Instantiates a new server thread and a new manager.
 	* run
@@ -107,11 +110,12 @@ To run server, `java backend/Server`. To run client, `java frontend/Client`
 	* sendData
 		* Is an overloaded method to sendData; sends data and a status update.
 
-### Frontend Class Descriptions
+## Frontend Class Descriptions
 
 * **JA Button Class:**
 	* Serves as an extension to the regular JButton and allows for assigning user accounts to a JButton.
 	* Testing done on this class is through JUnit tests in RunLocalTest.java.
+		* JUnit tests check that all methods and fields are declared properly, then attempt to call a method with both valid and invalid parameters when applicable for funcitonality
 	* Constructor
 		* Makes a regular JButton but adds a client action.
 	* Constructor
@@ -127,6 +131,8 @@ To run server, `java backend/Server`. To run client, `java frontend/Client`
 * **Client Class:**
 	* Allows the user to interact with the application. Shows appropriate GUIs for each interaction, manages the client logic, and makes requests to the server.
 	* Testing done on this class is through JUnit tests in RunLocalTest.java. GUI testing included just entering correct inputs to see if inputs inputted correctly would
+		* JUnit tests check that all methods and fields are declared properly, then attempt to call a method with both valid and invalid parameters when applicable for funcitonality
+		* GUI testing was done by attempting to enter valid and invalid information into fields to ensure proper functionality of the Client, as well as attempting to use every possible reachable part of the GUI (all buttons in GUI, all open fields, closing each GUI) to ensure that overall functionality was as desired.
 	work. Then incorrect inputs are put in to get the error messages to display to make sure error messages are displayed in the correct situations.
 	* actionPerformed
 		* Watches/manages the buttons. Chooses what to do after a button is pressed depending on circumstances.
