@@ -1,6 +1,11 @@
 # CS180 Project5
 ## Team 15-3
 
+## How to run application
+Compile all Java classes: `javac */*.java`
+
+To run server, `java backend/Server`. To run client, `java frontend/Client`
+
 * **Account Class:**
 	* This class is called to hold information regarding any info in a user's account.
   	* Constructor
