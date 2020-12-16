@@ -8,6 +8,10 @@
 - Parker Laughner
 - Vincent Vu
 
+This capstone project was made for Purdue University class CS18000 - Problem Solving and OOP. The purpose of this project assignment was to demonstrate our foundational knowledge in Java programming, server creation and handling, multithreading, and GUI creation. It also tested our ability to collaborate and communicate professionally with assigned teammates.
+
+-----------------------
+
 ### How to run application
 In terminal, compile all Java classes: `javac */*.java`
 
